@@ -20,9 +20,9 @@
 */
 
 //teleop code: we want to check if teleop is successful
-void initControl()
+void initFirstControl()
 {
-  int threshold = 20;             /* Int 'threshold' will allow us to ignore low
+  int threshold = 10;             /* Int 'threshold' will allow us to ignore low
                                     readings that keep our robot in perpetual motion.
                                     We need to tinker with the variable */
 
@@ -48,10 +48,24 @@ void initControl()
       motor[motorB] = 0;
     }
 
+    //and the following is for the 2nd controller.
+
+	if(abs(joystick.joy2_y1) > threshold){
+		motor[motorC] = joystick.joy2_y1;
+	} else {
+		motor[motorC] = joystick.joy2_y1;
+	}
+
+	if(abs(joystick.joy2_y2) > threshold){
+		motor[motorC] = joystick.joy2_y2;
+	} else {
+		motor[motorD] = joystick.joy2_y2;
+	}
+
   }
 }
 
-
+// This code may be VERY problematic. Be careful if using
 void moveToBeacon(){
 	int _dirAC = 0;
 	 int acS1, acS2, acS3, acS4, acS5 = 0;
@@ -109,9 +123,37 @@ void moveToBeacon(){
 	}
 }
 
+bool checkIfTouching(){ //micah wanted touch sensor stuff i think.
+	if (SensorValue(touch) == 1){ 
+		return true;
+	} else { 
+		return false; 
+	}
+}
+
+
 void flingBlocks(){
+// reserved for when micah finishes his apperatus (Techical term for thingy)
+}
+
+void panicButton() //YES I'M MAKING A PANIC BUTTON DEAL WITH IT
+{
+	// Each controller will have a designated panic button. also this will automatticly kick in if connection is lost
+	if (joystick.joy1_TopHat == 1){
+		enterSafeMode(0);
+	} else {
+		//Umm.. I don't know what to put here.... I'll think of something
+	}
+}
+
+void enterSafeMode(){
+
+//STOP EVERYTHING NOTHING CAN MOVE
+	setPowerAllMotors(0);
+
 
 }
+
 
 void setPowerAllMotors(int x){
 // simultanously set power for all motors to the specified amount
@@ -123,6 +165,8 @@ motor[motorD] = x;
 
 task main()
 {
-initControl();
+
+initFirstControl();
+
 
 }
