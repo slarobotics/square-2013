@@ -14,10 +14,24 @@
 #include "/drivers/include/hitechnic-irseeker-v2.h" //IR sensor drivers- Don't touch this as well!
 
 /*
-* enterthematrix.c
-* -- This is a program to test MATRIX controllers and servos
-* in order to find how if and how they work.
+* teleop.c
+* -- This is a program to use teleop in the competition
 */
+
+void setPowerAllMotors(int x){
+// simultanously set power for all motors to the specified amount
+	motor[motorA] = x;
+	motor[motorB] = x;
+	motor[motorC] = x;
+	motor[motorD] = x;
+}
+
+
+void enterSafeMode(){
+
+//STOP EVERYTHING NOTHING CAN MOVE
+	setPowerAllMotors(0);
+}
 
 //teleop code: we want to check if teleop is successful
 void initControl()
@@ -50,49 +64,35 @@ void initControl()
 
     //and the following is for the 2nd controller.
 
-	if(abs(joystick.joy2_y1) > threshold){
-		motor[motorC] = joystick.joy2_y1;
+	if(joy1Btn(1) == 1){ // for flag raiser
+		motor[motorC] = 100;
 	} else {
-		motor[motorC] = joystick.joy2_y1;
+		motor[motorC] = 0;
 	}
 
-	if(abs(joystick.joy2_y2) > threshold){
-		motor[motorC] = joystick.joy2_y2;
+	if(joy1Btn(7) == 1){ // for micah's pulley
+		motor[motorD] = 100;
+	} if(joy1Btn(8) == 1) {
+		motor[motorD] = 0;
+	}
+
+	int servoPosition = ServoValue[servo1];
+	if(joy1Btn(5) == 1){
+		servo[servo1] = 160;
+		wait1Msec(2000);
+		servo[servo1] = 0;
+	}
+
+	if (joy1Btn(9) == 1 && joy1Btn(10) == 1){
+		enterSafeMode();
 	} else {
-		motor[motorD] = joystick.joy2_y2;
+		//Umm.. I don't know what to put here.... I'll think of something
 	}
 
   }
 }
 
 // This code may be VERY problematic. Be careful if using
-
-
-void setPowerAllMotors(int x){
-// simultanously set power for all motors to the specified amount
-	motor[motorA] = x;
-	motor[motorB] = x;
-	motor[motorC] = x;
-	motor[motorD] = x;
-}
-
-
-void enterSafeMode(){
-
-//STOP EVERYTHING NOTHING CAN MOVE
-	setPowerAllMotors(0);
-}
-
-
-void panicButton() //YES I'M MAKING A PANIC BUTTON DEAL WITH IT
-{
-	// Each controller will have a designated panic button. also this will automatticly kick in if connection is lost
-	if (joystick.joy1_TopHat == 1){
-		enterSafeMode(0);
-	} else {
-		//Umm.. I don't know what to put here.... I'll think of something
-	}
-}
 
 
 task main()
